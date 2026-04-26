@@ -235,3 +235,21 @@
   background-color: rgba(255, 255, 255, 0.16);
   color: white;
 }
+
+/* On phones, long command/code lines should wrap instead of disappearing
+   outside the narrow card. Keep LTR order, but let the text break safely. */
+@media (max-width: 640px) {
+  .ProseMirror .code-block pre,
+  .note-content .note-code-block pre {
+    padding: 0.95rem;
+    white-space: pre-wrap;
+    overflow-x: visible;
+  }
+
+  .ProseMirror .code-block pre code,
+  .note-content .note-code-block pre code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
