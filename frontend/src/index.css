@@ -1,0 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  html, body {
+    @apply h-full bg-ink-50 text-ink-900 antialiased;
+    font-family: theme('fontFamily.sans');
+  }
+
+  body {
+    @apply min-h-screen;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium
+           transition-all duration-150 select-none disabled:opacity-50 disabled:cursor-not-allowed
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2
+           focus-visible:ring-offset-ink-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-600 text-white shadow-soft hover:bg-brand-700 active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-ink-700 hover:bg-ink-100 active:scale-[0.98];
+  }
+
+  .btn-danger {
+    @apply btn bg-rose-600 text-white hover:bg-rose-700 active:scale-[0.98];
+  }
+
+  .input {
+    @apply block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-sm
+           text-ink-900 placeholder:text-ink-400 shadow-sm transition-all
+           focus:border-brand-400 focus:outline-none focus:ring-4 focus:ring-brand-100
+           disabled:bg-ink-100;
+  }
+
+  .card {
+    @apply rounded-2xl bg-white shadow-soft;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-ink-700 mb-1.5;
+  }
+}
+
+/* Tiptap content styling */
+.ProseMirror {
+  min-height: 40vh;
+  outline: none;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: right;
+  color: theme('colors.ink.400');
+  pointer-events: none;
+  height: 0;
+}
+
+/* Task list (checklist) — built-in Tiptap markup uses <ul data-type="taskList"> */
+.ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin: 0.25rem 0;
+}
+
+.ProseMirror ul[data-type="taskList"] li > label {
+  flex-shrink: 0;
+  margin-top: 0.35rem;
+  user-select: none;
+}
+
+.ProseMirror ul[data-type="taskList"] li > div {
+  flex: 1 1 auto;
+}
+
+.ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 0.35rem;
+  border: 1.5px solid theme('colors.ink.300');
+  background-color: white;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  display: inline-grid;
+  place-content: center;
+  transition: background-color 120ms, border-color 120ms;
+}
+
+.ProseMirror ul[data-type="taskList"] input[type="checkbox"]:checked {
+  background-color: theme('colors.brand.600');
+  border-color: theme('colors.brand.600');
+}
+
+.ProseMirror ul[data-type="taskList"] input[type="checkbox"]:checked::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.55rem;
+  background-color: white;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.ProseMirror ul[data-type="taskList"] li[data-checked="true"] > div p {
+  color: theme('colors.ink.400');
+  text-decoration: line-through;
+}
+
+.ProseMirror ul[data-type="taskList"] ul[data-type="taskList"] {
+  margin-inline-start: 1.25rem;
+}
+
+/* Block quote in RTL needs right border, not left */
+.ProseMirror blockquote {
+  border-right: 4px solid theme('colors.brand.300');
+  border-left: 0;
+  padding-right: 1rem;
+  margin: 1rem 0;
+  color: theme('colors.ink.700');
+}
+
+/* Inline code */
+.ProseMirror code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background-color: theme('colors.ink.100');
+  color: theme('colors.brand.800');
+  padding: 0.12em 0.4em;
+  border-radius: 0.35rem;
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+/* Code block (custom NodeView wrapper) */
+.ProseMirror .code-block {
+  position: relative;
+  margin: 1rem 0;
+  border-radius: 0.75rem;
+  background-color: theme('colors.ink.900');
+  overflow: hidden;
+  direction: ltr;
+}
+
+.ProseMirror .code-block pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  background: transparent;
+  color: theme('colors.ink.100');
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  direction: ltr;
+  text-align: left;
+}
+
+.ProseMirror .code-block pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  display: block;
+  white-space: pre;
+  direction: ltr;
+}
+
+/* Copy button — appears in top-LEFT (since dir=ltr) */
+.ProseMirror .code-block .code-block__copy {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.45rem;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: theme('colors.ink.200');
+  font-size: 0.7rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 120ms, color 120ms, opacity 120ms;
+  opacity: 0;
+  user-select: none;
+  font-family: theme('fontFamily.sans');
+}
+
+.ProseMirror .code-block:hover .code-block__copy,
+.ProseMirror .code-block:focus-within .code-block__copy {
+  opacity: 1;
+}
+
+.ProseMirror .code-block .code-block__copy:hover {
+  background-color: rgba(255, 255, 255, 0.16);
+  color: white;
+}
