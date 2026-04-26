@@ -136,12 +136,46 @@ npm run dev                # http://localhost:5173
 
 افتح المتصفح على `http://localhost:5173` وستظهر شاشة **الإعداد الأولي** لتختار رقمك السري. بعدها تدخل لوحة المشاريع مباشرة.
 
-### بناء الإنتاج
+### بناء الإنتاج محلياً
 
 ```bash
 cd frontend && npm run build      # ينتج dist/
 cd backend  && npm start          # يخدم API
 ```
+
+## النشر على Vercel (Services preset)
+
+المشروع جاهز للنشر كخدمتين تحت دومين واحد عبر ميزة Vercel **Services** (preset متعدد الخدمات).
+
+1. **Import** المستودع من GitHub في Vercel.
+2. اختر Application Preset: **Services** (سيكتشف `frontend/` كـ Vite و `backend/` كـ Express تلقائياً).
+3. سيُكتشف `vercel.json` في الـ root الذي يحتوي:
+
+   ```json
+   {
+     "experimentalServices": {
+       "frontend": { "entrypoint": "frontend", "routePrefix": "/", "framework": "vite" },
+       "backend":  { "entrypoint": "backend",  "routePrefix": "/api", "framework": "express" }
+     }
+   }
+   ```
+4. **Environment Variables** (على مستوى المشروع — تشمل الخدمتين):
+
+   | Key | Value (مثال) | ملاحظة |
+   |-----|--------------|--------|
+   | `DATABASE_URL` | `postgresql://USER:PASS@…neon.tech/neondb?sslmode=require` | إلزامي. |
+   | `JWT_SECRET` | _اتركه فارغاً_ | الخادم يولّد واحداً ويخزّنه في القاعدة عند أوّل تشغيل. |
+   | `JWT_EXPIRES_IN_HOURS` | `72` | اختياري. |
+   | `BCRYPT_COST` | `12` | اختياري. |
+   | `CORS_ORIGIN` | _اتركه فارغاً_ | الواجهة والخادم على نفس الدومين، فلا حاجة. |
+
+5. اضغط **Deploy**. ستحصل على دومين مثل `my-notes.vercel.app` يخدّم الواجهة، وكل طلبات `/api/*` تُوجَّه تلقائياً للخادم.
+
+### بعد النشر
+
+- ادخل على الدومين → ستظهر شاشة الإعداد الأوّلي لاختيار الـ PIN.
+- إذا أعدت النشر، الـ JWT_SECRET المخزَّن في القاعدة يبقى ثابتاً، فلن يخرج المستخدمون.
+- لتدوير المفتاح يدوياً: احذف `master_jwt_secret` من جدول `settings` في القاعدة، أو اضبط `JWT_SECRET` كمتغيّر بيئي ليتجاوز الـ DB.
 
 ## النسخ الاحتياطي
 

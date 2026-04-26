@@ -23,7 +23,13 @@ function createApp() {
   app.set('trust proxy', 1);
 
   app.use(helmet());
-  app.use(cors({ origin: config.cors.origin, credentials: false }));
+  app.use(
+    cors({
+      origin: config.cors.origin,
+      credentials: false,
+      methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    })
+  );
   app.use(express.json({ limit: '25mb' }));
 
   if (config.env !== 'test') {

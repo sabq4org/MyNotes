@@ -5,6 +5,14 @@ const { initDatabase, closeDatabase } = require('./db/database');
 const createApp = require('./app');
 
 async function start() {
+  if (!config.database.url) {
+    console.error(
+      '[mynotes] DATABASE_URL is not set. ' +
+        'Set it in your environment (Vercel: Project → Settings → Environment Variables).'
+    );
+    process.exit(1);
+  }
+
   try {
     await initDatabase();
   } catch (err) {

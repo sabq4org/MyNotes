@@ -32,8 +32,28 @@ const config = {
   },
   bcryptCost: toInt(process.env.BCRYPT_COST, 12),
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    /**
+     * Raw value as provided by the user. May be one of:
+     *   - empty / unset → defaults to localhost dev origin
+     *   - "*" → allow any origin
+     *   - "https://a.com,https://b.com" → allow this set
+     *   - "https://only-this.com" → single origin
+     */
+    origin: parseCorsOrigin(process.env.CORS_ORIGIN),
   },
 };
+
+function parseCorsOrigin(raw) {
+  if (raw == null || raw === '') return 'http://localhost:5173';
+  const value = raw.trim();
+  if (value === '*') return true;
+  const list = value
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (list.length === 0) return 'http://localhost:5173';
+  if (list.length === 1) return list[0];
+  return list;
+}
 
 module.exports = config;
