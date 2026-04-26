@@ -5,13 +5,14 @@
   "installCommand": "npm install --prefix backend && npm install --prefix frontend",
   "framework": null,
   "functions": {
-    "api/[...path].js": {
+    "api/index.js": {
       "memory": 1024,
       "maxDuration": 30,
       "includeFiles": "backend/src/db/schema.sql"
     }
   },
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/api/:path*", "destination": "/api" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

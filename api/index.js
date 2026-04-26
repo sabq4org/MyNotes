@@ -1,9 +1,11 @@
 'use strict';
 
 /**
- * Vercel Serverless Function — catches every /api/* request and forwards
- * it to our Express app. Reuses one app instance per warm container so
- * cold starts only pay the schema-init cost on the very first request.
+ * Vercel Serverless Function — entrypoint for every /api/* request.
+ *
+ * vercel.json rewrites all /api/:path* into /api so this single function
+ * fronts the entire Express app. We cache the warm app instance per
+ * container so cold starts only pay the schema-init cost once.
  */
 
 const createApp = require('../backend/src/app');
@@ -18,7 +20,6 @@ async function getApp() {
         await initDatabase();
         return createApp();
       } catch (err) {
-        // Don't cache the failure — let the next request retry init.
         appPromise = null;
         throw err;
       }
