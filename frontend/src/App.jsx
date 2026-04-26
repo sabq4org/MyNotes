@@ -14,30 +14,70 @@ function FullScreenLoader() {
   );
 }
 
-function AuthGate() {
-  const { bootstrapping, isAuthenticated, isSetup } = useAuth();
+function BackendUnreachable({ error }) {
+  const isDev = import.meta.env.DEV;
+  const status = error?.status;
+  const code = error?.code;
 
-  if (bootstrapping) return <FullScreenLoader />;
+  let title = 'تعذّر الاتصال بالخادم';
+  let hint;
+  if (status === 404) {
+    title = 'مسار الـ API غير موجود';
+    hint = isDev
+      ? 'تأكّد أن الخادم يعمل على http://localhost:4000 وأن proxy في vite.config.js مضبوط.'
+      : 'لم يُوجَّه /api/* إلى خدمة الخادم. تحقّق من إعدادات النشر (vercel.json + Services preset) ومن أن خدمة backend تم نشرها بنجاح.';
+  } else if (status >= 500) {
+    title = 'الخادم متاح ولكنّه فشل';
+    hint = isDev
+      ? 'افحص سجلّ الخادم في الطرفية لمعرفة الخطأ.'
+      : 'افتح Vercel → Deployments → آخر deploy → Logs → backend، وتأكّد أن DATABASE_URL مضبوط ومتاح.';
+  } else {
+    hint = isDev
+      ? 'تأكّد أن الخادم يعمل على http://localhost:4000، ثم أعد تحميل الصفحة.'
+      : 'قد تكون خدمة الخادم لم تنطلق بعد، أو أن DATABASE_URL غير مضبوط في إعدادات النشر.';
+  }
 
-  if (isSetup === null) {
-    // Couldn't reach the server. Show a minimal retry state.
-    return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="card p-6 max-w-sm text-center">
-          <h2 className="font-semibold text-ink-900">تعذّر الاتصال بالخادم</h2>
-          <p className="text-sm text-ink-500 mt-2">
-            تأكّد أن الخادم يعمل على المنفذ 4000، ثم أعد تحميل الصفحة.
+  return (
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="card p-6 max-w-md text-center">
+        <h2 className="font-semibold text-ink-900">{title}</h2>
+        <p className="text-sm text-ink-500 mt-2">{hint}</p>
+        {(status || code) && (
+          <p className="mt-3 text-[11px] font-mono text-ink-400">
+            {status ? `HTTP ${status}` : ''}
+            {status && code ? ' · ' : ''}
+            {code || ''}
           </p>
+        )}
+        <div className="mt-4 flex items-center justify-center gap-2">
           <button
             type="button"
-            className="btn-primary mt-4"
+            className="btn-primary"
             onClick={() => window.location.reload()}
           >
             إعادة المحاولة
           </button>
+          <a
+            href="/api/health"
+            target="_blank"
+            rel="noreferrer"
+            className="btn-ghost text-sm"
+          >
+            فحص /api/health
+          </a>
         </div>
       </div>
-    );
+    </div>
+  );
+}
+
+function AuthGate() {
+  const { bootstrapping, isAuthenticated, isSetup, bootstrapError } = useAuth();
+
+  if (bootstrapping) return <FullScreenLoader />;
+
+  if (isSetup === null) {
+    return <BackendUnreachable error={bootstrapError} />;
   }
 
   if (!isAuthenticated) {

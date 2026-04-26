@@ -14,10 +14,12 @@ export function AuthProvider({ children }) {
   const [bootstrapping, setBootstrapping] = useState(true);
   const [isAuthenticated, setAuthenticated] = useState(Boolean(getToken()));
   const [isSetup, setIsSetup] = useState(null);
+  const [bootstrapError, setBootstrapError] = useState(null);
 
   const refreshStatus = useCallback(async () => {
     const data = await fetchAuthStatus();
     setIsSetup(Boolean(data.isSetup));
+    setBootstrapError(null);
     return data;
   }, []);
 
@@ -26,8 +28,15 @@ export function AuthProvider({ children }) {
     (async () => {
       try {
         await refreshStatus();
-      } catch {
-        /* leave isSetup null and let UI show retry/error */
+      } catch (err) {
+        if (!mounted) return;
+        const status = err?.response?.status;
+        const data = err?.response?.data;
+        setBootstrapError({
+          status: status || null,
+          code: err?.code || data?.error || null,
+          message: data?.message || err?.message || 'Network error',
+        });
       } finally {
         if (mounted) setBootstrapping(false);
       }
@@ -71,6 +80,7 @@ export function AuthProvider({ children }) {
       bootstrapping,
       isAuthenticated,
       isSetup,
+      bootstrapError,
       login,
       setupAndLogin,
       logout,
@@ -81,6 +91,7 @@ export function AuthProvider({ children }) {
       bootstrapping,
       isAuthenticated,
       isSetup,
+      bootstrapError,
       login,
       setupAndLogin,
       logout,
