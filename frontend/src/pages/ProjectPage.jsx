@@ -236,7 +236,14 @@ export default function ProjectPage() {
   // When user changes selection, flush previous edits first.
   const selectNote = useCallback(
     async (note) => {
-      if (note.id === selectedId) return;
+      // On small screens the first note may already be selected while the
+      // reader pane is hidden. Tapping it again must still open the note.
+      if (note.id === selectedId) {
+        setMobileShowEditor(true);
+        setMode('view');
+        return;
+      }
+
       await flush();
       setSelectedId(note.id);
       setDraftTitle(note.title || '');
