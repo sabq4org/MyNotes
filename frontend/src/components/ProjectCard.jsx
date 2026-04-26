@@ -17,6 +17,7 @@ export default function ProjectCard({ project, onEdit, onDelete, onOpen }) {
   }, [menuOpen]);
 
   const initial = project.name.trim().slice(0, 1).toUpperCase();
+  const icon = project.icon || initial;
   const color = project.color || '#6366f1';
 
   return (
@@ -34,10 +35,12 @@ export default function ProjectCard({ project, onEdit, onDelete, onOpen }) {
     >
       <div className="flex items-start gap-3">
         <div
-          className="size-12 rounded-xl flex items-center justify-center text-white text-lg font-semibold shadow-sm shrink-0"
+          className="size-12 rounded-xl flex items-center justify-center text-white text-2xl font-semibold shadow-sm shrink-0"
           style={{ backgroundColor: color }}
         >
-          {initial}
+          <span className="leading-none" aria-hidden>
+            {icon}
+          </span>
         </div>
 
         <div className="flex-1 min-w-0">

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Modal from './Modal';
 import Spinner from './Spinner';
 import ColorPicker, { PROJECT_COLORS } from './ColorPicker';
+import IconPicker, { PROJECT_ICONS } from './IconPicker';
 import { describeError } from '../lib/errors';
 
 export default function ProjectFormModal({
@@ -14,6 +15,7 @@ export default function ProjectFormModal({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [color, setColor] = useState(PROJECT_COLORS[0]);
+  const [icon, setIcon] = useState(PROJECT_ICONS[0]);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -22,6 +24,7 @@ export default function ProjectFormModal({
       setName(initial?.name ?? '');
       setDescription(initial?.description ?? '');
       setColor(initial?.color ?? PROJECT_COLORS[0]);
+      setIcon(initial?.icon ?? PROJECT_ICONS[0]);
       setError('');
       setBusy(false);
     }
@@ -40,6 +43,7 @@ export default function ProjectFormModal({
         name: name.trim(),
         description: description.trim() || null,
         color,
+        icon,
       });
       onClose?.();
     } catch (err) {
@@ -83,7 +87,12 @@ export default function ProjectFormModal({
         </div>
 
         <div>
-          <label className="label">اللون</label>
+          <label className="label">الأيقونة</label>
+          <IconPicker value={icon} onChange={setIcon} color={color} />
+        </div>
+
+        <div>
+          <label className="label">لون الأيقونة</label>
           <ColorPicker value={color} onChange={setColor} />
         </div>
 

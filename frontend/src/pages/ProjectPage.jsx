@@ -426,10 +426,12 @@ export default function ProjectPage() {
           <span className="text-ink-300">/</span>
           <div className="flex items-center gap-2 min-w-0">
             <span
-              className="size-2.5 rounded-full shrink-0"
+              className="size-7 rounded-lg shrink-0 flex items-center justify-center text-sm shadow-sm"
               style={{ backgroundColor: project?.color || '#6366f1' }}
               aria-hidden
-            />
+            >
+              {project?.icon || project?.name?.trim()?.slice(0, 1) || 'م'}
+            </span>
             <h1 className="text-lg font-semibold text-ink-900 truncate">
               {project?.name}
             </h1>
