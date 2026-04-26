@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { LogOut, NotebookPen, Search } from 'lucide-react';
+import { KeyRound, LogOut, NotebookPen, Search } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import SearchModal from './SearchModal';
 import BackupMenu from './BackupMenu';
+import ChangePinModal from './ChangePinModal';
 
 const isMac =
   typeof navigator !== 'undefined' &&
@@ -12,6 +13,7 @@ const isMac =
 export default function AppHeader() {
   const { logout } = useAuth();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [changePinOpen, setChangePinOpen] = useState(false);
 
   useEffect(() => {
     function onKey(e) {
@@ -71,6 +73,15 @@ export default function AppHeader() {
             <BackupMenu onAfterImport={handleAfterImport} />
             <button
               type="button"
+              onClick={() => setChangePinOpen(true)}
+              className="btn-ghost text-sm"
+              title="تغيير كلمة المرور"
+            >
+              <KeyRound size={16} />
+              <span className="hidden sm:inline">كلمة المرور</span>
+            </button>
+            <button
+              type="button"
               onClick={logout}
               className="btn-ghost text-sm"
               title="تسجيل الخروج"
@@ -83,6 +94,10 @@ export default function AppHeader() {
       </header>
 
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <ChangePinModal
+        open={changePinOpen}
+        onClose={() => setChangePinOpen(false)}
+      />
     </>
   );
 }
