@@ -143,23 +143,32 @@ cd frontend && npm run build      # ينتج dist/
 cd backend  && npm start          # يخدم API
 ```
 
-## النشر على Vercel (Services preset)
+## النشر على Vercel
 
-المشروع جاهز للنشر كخدمتين تحت دومين واحد عبر ميزة Vercel **Services** (preset متعدد الخدمات).
+تطبيق Express يُنشر كـ **Vercel Serverless Function** والواجهة كموقع ثابت — كل شيء على دومين واحد:
+
+```
+/
+├── frontend/           # Vite SPA (يُبنى إلى dist/)
+├── backend/            # كود Express (يُستخدم كمكتبة)
+├── api/
+│   └── [...path].js    # Vercel function: يلتقط /api/* ويمرّره إلى Express
+├── vercel.json
+└── package.json
+```
+
+### خطوات النشر
 
 1. **Import** المستودع من GitHub في Vercel.
-2. اختر Application Preset: **Services** (سيكتشف `frontend/` كـ Vite و `backend/` كـ Express تلقائياً).
-3. سيُكتشف `vercel.json` في الـ root الذي يحتوي:
+2. **Application Preset**: اختر **Other** (لا تستخدم Services preset).
+3. سيُكتشف `vercel.json` تلقائياً، ويحوي:
+   - `installCommand`: `npm install --prefix backend && npm install --prefix frontend`
+   - `buildCommand`: `npm run build --prefix frontend`
+   - `outputDirectory`: `frontend/dist`
+   - `functions: api/[...path].js` بمدّة قصوى 30s ومضاف إليه `schema.sql`.
+   - `rewrites` ليعمل التوجيه (SPA fallback لكل ما عدا `/api/*`).
 
-   ```json
-   {
-     "experimentalServices": {
-       "frontend": { "entrypoint": "frontend", "routePrefix": "/", "framework": "vite" },
-       "backend":  { "entrypoint": "backend",  "routePrefix": "/api", "framework": "express" }
-     }
-   }
-   ```
-4. **Environment Variables** (على مستوى المشروع — تشمل الخدمتين):
+4. **Environment Variables** (Project Settings → Environment Variables):
 
    | Key | Value (مثال) | ملاحظة |
    |-----|--------------|--------|
@@ -169,13 +178,23 @@ cd backend  && npm start          # يخدم API
    | `BCRYPT_COST` | `12` | اختياري. |
    | `CORS_ORIGIN` | _اتركه فارغاً_ | الواجهة والخادم على نفس الدومين، فلا حاجة. |
 
-5. اضغط **Deploy**. ستحصل على دومين مثل `my-notes.vercel.app` يخدّم الواجهة، وكل طلبات `/api/*` تُوجَّه تلقائياً للخادم.
+5. اضغط **Deploy**.
+
+### كيف يعمل التوجيه
+
+- `https://<app>.vercel.app/api/auth/status` → Vercel يستدعي `api/[...path].js` → Express يستقبل `/api/auth/status` ويوجّه لـ `routes/auth.js`.
+- `https://<app>.vercel.app/projects/5` → Vercel يجد أنّه ليس ملف ثابت، فيُعيد كتابته إلى `index.html` (React Router يتولّى الباقي).
+- `axios baseURL` في الواجهة هو `/api` (نسبي) → نفس الدومين → بلا CORS.
 
 ### بعد النشر
 
 - ادخل على الدومين → ستظهر شاشة الإعداد الأوّلي لاختيار الـ PIN.
-- إذا أعدت النشر، الـ JWT_SECRET المخزَّن في القاعدة يبقى ثابتاً، فلن يخرج المستخدمون.
-- لتدوير المفتاح يدوياً: احذف `master_jwt_secret` من جدول `settings` في القاعدة، أو اضبط `JWT_SECRET` كمتغيّر بيئي ليتجاوز الـ DB.
+- إعادة النشر لا تُسجّل المستخدمين خروجاً (الـ JWT secret مُخزَّن في القاعدة).
+- لتدوير المفتاح: احذف صفّ `jwt_secret` من جدول `settings`، أو اضبط `JWT_SECRET` كمتغيّر بيئي ليتجاوز الـ DB.
+
+### أوّل cold start بطيء؟ طبيعي
+
+- في أوّل request بعد فترة هدوء، الـ function تُنشئ pool للقاعدة وتُشغّل `schema.sql` (idempotent). يستغرق ~1–3 ثوانٍ لمرة واحدة، ثم تُكاش الـ Express app في الذاكرة. الطلبات اللاحقة سريعة.
 
 ## النسخ الاحتياطي
 
