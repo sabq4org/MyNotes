@@ -1,6 +1,56 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { FileText } from 'lucide-react';
 import { relativeTime } from '../lib/format';
+
+function stripViewOnlyCodeControls(root) {
+  root.querySelectorAll('.note-code-copy').forEach((button) => button.remove());
+  root.querySelectorAll('.note-code-block').forEach((wrapper) => {
+    const pre = wrapper.querySelector(':scope > pre');
+    if (pre) {
+      wrapper.replaceWith(pre);
+    }
+  });
+}
+
+function getCleanContentHtml(root) {
+  const clone = root.cloneNode(true);
+  stripViewOnlyCodeControls(clone);
+  return clone.innerHTML;
+}
+
+function decorateCodeBlocks(html) {
+  if (!html || typeof document === 'undefined') return html;
+
+  const template = document.createElement('template');
+  template.innerHTML = html;
+
+  template.content.querySelectorAll('pre').forEach((pre, index) => {
+    if (pre.closest('.note-code-block')) return;
+
+    pre.setAttribute('dir', 'ltr');
+    pre.querySelectorAll('code').forEach((code) => {
+      code.setAttribute('dir', 'ltr');
+    });
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'note-code-block';
+    wrapper.setAttribute('dir', 'ltr');
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'note-code-copy';
+    button.setAttribute('aria-label', 'نسخ الكود');
+    button.setAttribute('title', 'نسخ الكود');
+    button.dataset.codeIndex = String(index);
+    button.innerHTML = '<span aria-hidden="true">⧉</span><span>نسخ</span>';
+
+    pre.parentNode?.insertBefore(wrapper, pre);
+    wrapper.appendChild(pre);
+    wrapper.appendChild(button);
+  });
+
+  return template.innerHTML;
+}
 
 /**
  * Read-only rendering of a note's content using the same Tailwind `prose`
@@ -39,7 +89,7 @@ export default function NoteView({
       const next = target.checked;
       li.setAttribute('data-checked', next ? 'true' : 'false');
       target.checked = next;
-      onTaskToggle(root.innerHTML);
+      onTaskToggle(getCleanContentHtml(root));
     };
 
     root.addEventListener('change', handler);
@@ -62,9 +112,63 @@ export default function NoteView({
       a.setAttribute('target', '_blank');
       a.setAttribute('rel', 'noopener noreferrer');
     });
+
   }, [html]);
 
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+
+    const handler = async (e) => {
+      const button = e.target.closest?.('.note-code-copy');
+      if (!button) return;
+
+      const wrapper = button.closest('.note-code-block');
+      const text = wrapper?.querySelector('pre')?.innerText || '';
+      if (!text) return;
+
+      let copiedOk = false;
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(text);
+          copiedOk = true;
+        }
+      } catch {
+        copiedOk = false;
+      }
+
+      if (!copiedOk) {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          copiedOk = document.execCommand('copy');
+          document.body.removeChild(ta);
+        } catch {
+          copiedOk = false;
+        }
+      }
+
+      if (copiedOk) {
+        const previous = button.innerHTML;
+        button.innerHTML = '<span aria-hidden="true">✓</span><span>تم النسخ</span>';
+        button.setAttribute('aria-label', 'تم نسخ الكود');
+        window.setTimeout(() => {
+          button.innerHTML = previous;
+          button.setAttribute('aria-label', 'نسخ الكود');
+        }, 1400);
+      }
+    };
+
+    root.addEventListener('click', handler);
+    return () => root.removeEventListener('click', handler);
+  }, []);
+
   const isEmpty = !html || !html.trim() || html.trim() === '<p></p>';
+  const decoratedHtml = useMemo(() => decorateCodeBlocks(html), [html]);
 
   return (
     <div className="flex flex-col h-full">
@@ -104,14 +208,14 @@ export default function NoteView({
             ref={ref}
             dir="rtl"
             className={
-              'prose prose-ink max-w-none px-6 py-5 ' +
+              'note-content prose prose-ink max-w-none px-6 py-5 ' +
               'prose-headings:font-semibold prose-p:my-3 prose-li:my-1 ' +
               'prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline ' +
               'prose-blockquote:border-r-4 prose-blockquote:border-l-0 prose-blockquote:border-brand-300 prose-blockquote:bg-brand-50/40 prose-blockquote:py-1 prose-blockquote:rounded ' +
               'prose-code:before:content-none prose-code:after:content-none ' +
               'prose-code:bg-ink-100 prose-code:text-ink-800 prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:font-medium'
             }
-            dangerouslySetInnerHTML={{ __html: html }}
+            dangerouslySetInnerHTML={{ __html: decoratedHtml }}
           />
         )}
       </div>

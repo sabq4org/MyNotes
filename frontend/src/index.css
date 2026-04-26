@@ -151,7 +151,8 @@
 }
 
 /* Inline code */
-.ProseMirror code {
+.ProseMirror code,
+.note-content :not(pre) > code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.88em;
   background-color: theme('colors.ink.100');
@@ -162,8 +163,9 @@
   unicode-bidi: embed;
 }
 
-/* Code block (custom NodeView wrapper) */
-.ProseMirror .code-block {
+/* Code block (custom NodeView wrapper + read-only note view) */
+.ProseMirror .code-block,
+.note-content .note-code-block {
   position: relative;
   margin: 1rem 0;
   border-radius: 0.75rem;
@@ -172,7 +174,8 @@
   direction: ltr;
 }
 
-.ProseMirror .code-block pre {
+.ProseMirror .code-block pre,
+.note-content .note-code-block pre {
   margin: 0;
   padding: 1rem 1.1rem;
   overflow-x: auto;
@@ -185,7 +188,8 @@
   text-align: left;
 }
 
-.ProseMirror .code-block pre code {
+.ProseMirror .code-block pre code,
+.note-content .note-code-block pre code {
   background: transparent;
   color: inherit;
   padding: 0;
@@ -194,10 +198,12 @@
   display: block;
   white-space: pre;
   direction: ltr;
+  text-align: left;
 }
 
-/* Copy button — appears in top-LEFT (since dir=ltr) */
-.ProseMirror .code-block .code-block__copy {
+/* Copy button */
+.ProseMirror .code-block .code-block__copy,
+.note-content .note-code-block .note-code-copy {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
@@ -218,11 +224,14 @@
 }
 
 .ProseMirror .code-block:hover .code-block__copy,
-.ProseMirror .code-block:focus-within .code-block__copy {
+.ProseMirror .code-block:focus-within .code-block__copy,
+.note-content .note-code-block:hover .note-code-copy,
+.note-content .note-code-block:focus-within .note-code-copy {
   opacity: 1;
 }
 
-.ProseMirror .code-block .code-block__copy:hover {
+.ProseMirror .code-block .code-block__copy:hover,
+.note-content .note-code-block .note-code-copy:hover {
   background-color: rgba(255, 255, 255, 0.16);
   color: white;
 }

@@ -6,24 +6,37 @@ export default function CodeBlockView({ node }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
+    const text = node.textContent || '';
+    if (!text) return;
+
+    let copiedOk = false;
     try {
-      const text = node.textContent || '';
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(text);
-      } else {
+        copiedOk = true;
+      }
+    } catch {
+      copiedOk = false;
+    }
+
+    if (!copiedOk) {
+      try {
         const ta = document.createElement('textarea');
         ta.value = text;
         ta.style.position = 'fixed';
         ta.style.opacity = '0';
         document.body.appendChild(ta);
         ta.select();
-        document.execCommand('copy');
+        copiedOk = document.execCommand('copy');
         document.body.removeChild(ta);
+      } catch {
+        copiedOk = false;
       }
+    }
+
+    if (copiedOk) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    } catch {
-      /* ignore */
     }
   };
 
