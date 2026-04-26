@@ -10,12 +10,18 @@ import {
   Plus,
   Search,
   ArrowLeft as MobileBack,
+  Pencil,
+  Check,
+  Trash2,
+  Pin,
+  PinOff,
 } from 'lucide-react';
 import clsx from 'clsx';
 
 import AppHeader from '../components/AppHeader';
 import NoteListItem from '../components/NoteListItem';
 import NoteEditor from '../components/NoteEditor';
+import NoteView from '../components/NoteView';
 import SaveIndicator from '../components/SaveIndicator';
 import EmptyState from '../components/EmptyState';
 import Spinner from '../components/Spinner';
@@ -57,6 +63,10 @@ export default function ProjectPage() {
   const [search, setSearch] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [mobileShowEditor, setMobileShowEditor] = useState(false);
+
+  // Read vs. edit mode for the currently selected note. Notes always open
+  // in 'view' mode unless the user just created an empty one (then 'edit').
+  const [mode, setMode] = useState('view');
 
   const titleInputRef = useRef(null);
 
@@ -113,6 +123,7 @@ export default function ProjectPage() {
     setDraftContent(target.content || '');
     setDraftTags((target.tags || []).map((t) => t.name));
     setMobileShowEditor(true);
+    setMode('view');
     const next = new URLSearchParams(searchParams);
     next.delete('note');
     setSearchParams(next, { replace: true });
@@ -232,10 +243,48 @@ export default function ProjectPage() {
       setDraftContent(note.content || '');
       setDraftTags((note.tags || []).map((t) => t.name));
       setMobileShowEditor(true);
+      setMode('view');
       setStaleNoteWarning('');
     },
     [flush, selectedId]
   );
+
+  // Toggle between read and edit modes. When leaving edit mode we flush any
+  // pending debounced save so the read view always reflects the latest data.
+  const enterEditMode = useCallback(() => {
+    setMode('edit');
+  }, []);
+
+  const exitEditMode = useCallback(async () => {
+    await flush();
+    setMode('view');
+  }, [flush]);
+
+  // Keyboard shortcuts: Cmd/Ctrl+E toggles edit, Esc exits edit.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (!selectedId) return;
+      const target = e.target;
+      const isFormField =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA');
+
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'e' || e.key === 'E')) {
+        e.preventDefault();
+        if (mode === 'edit') exitEditMode();
+        else enterEditMode();
+        return;
+      }
+      if (e.key === 'Escape' && mode === 'edit' && !isFormField) {
+        e.preventDefault();
+        exitEditMode();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mode, selectedId, enterEditMode, exitEditMode]);
 
   // Whenever drafts change, schedule a save (unless still loading the note).
   const onTitleChange = (e) => {
@@ -270,6 +319,8 @@ export default function ProjectPage() {
       setDraftContent('');
       setDraftTags([]);
       setMobileShowEditor(true);
+      // A brand-new empty note has nothing to read — jump straight to edit.
+      setMode('edit');
       setTimeout(() => titleInputRef.current?.focus(), 50);
     } catch (err) {
       alert(describeError(err, 'تعذّر إنشاء الملاحظة.'));
@@ -484,7 +535,7 @@ export default function ProjectPage() {
             </div>
           </aside>
 
-          {/* Editor area */}
+          {/* Editor / viewer area */}
           <section
             className={clsx(
               'card p-0 flex flex-col min-h-[60vh] md:min-h-0 overflow-hidden',
@@ -492,43 +543,144 @@ export default function ProjectPage() {
             )}
           >
             {selectedNote ? (
-              <>
-                <div className="px-4 py-2.5 border-b border-ink-100 bg-white space-y-2">
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setMobileShowEditor(false)}
-                      className="md:hidden p-1.5 rounded text-ink-500 hover:bg-ink-100"
-                      aria-label="رجوع"
-                    >
-                      <MobileBack size={18} />
-                    </button>
-                    <input
-                      ref={titleInputRef}
-                      type="text"
-                      value={draftTitle}
-                      onChange={onTitleChange}
-                      placeholder="عنوان الملاحظة"
-                      maxLength={200}
-                      className="flex-1 bg-transparent text-lg font-semibold text-ink-900 placeholder:text-ink-300 focus:outline-none"
+              mode === 'edit' ? (
+                <>
+                  <div className="px-4 py-2.5 border-b border-ink-100 bg-white space-y-2">
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setMobileShowEditor(false)}
+                        className="md:hidden p-1.5 rounded text-ink-500 hover:bg-ink-100"
+                        aria-label="رجوع"
+                      >
+                        <MobileBack size={18} />
+                      </button>
+                      <input
+                        ref={titleInputRef}
+                        type="text"
+                        value={draftTitle}
+                        onChange={onTitleChange}
+                        placeholder="عنوان الملاحظة"
+                        maxLength={200}
+                        className="flex-1 min-w-0 bg-transparent text-lg font-semibold text-ink-900 placeholder:text-ink-300 focus:outline-none"
+                      />
+                      <SaveIndicator status={status} errorMessage={errorMessage} />
+                      <button
+                        type="button"
+                        onClick={exitEditMode}
+                        className="btn-primary !py-1.5 !px-3 text-xs gap-1"
+                        title="إنهاء التحرير (Esc)"
+                      >
+                        <Check size={14} />
+                        تم
+                      </button>
+                    </div>
+                    <TagInput
+                      value={draftTags}
+                      onChange={onTagsChange}
+                      suggestions={allTags}
                     />
-                    <SaveIndicator status={status} errorMessage={errorMessage} />
                   </div>
-                  <TagInput
-                    value={draftTags}
-                    onChange={onTagsChange}
-                    suggestions={allTags}
-                  />
-                </div>
 
-                <div className="flex-1 min-h-0 overflow-hidden">
-                  <NoteEditor
-                    key={selectedNote.id}
-                    value={draftContent}
-                    onChange={onContentChange}
-                  />
-                </div>
-              </>
+                  <div className="flex-1 min-h-0 overflow-hidden">
+                    <NoteEditor
+                      key={selectedNote.id}
+                      value={draftContent}
+                      onChange={onContentChange}
+                      autoFocus
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="px-4 py-2.5 border-b border-ink-100 bg-white space-y-2">
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setMobileShowEditor(false)}
+                        className="md:hidden p-1.5 rounded text-ink-500 hover:bg-ink-100"
+                        aria-label="رجوع"
+                      >
+                        <MobileBack size={18} />
+                      </button>
+                      <h2 className="flex-1 min-w-0 truncate text-lg font-semibold text-ink-900">
+                        {draftTitle || (
+                          <span className="text-ink-300 font-normal">
+                            بلا عنوان
+                          </span>
+                        )}
+                      </h2>
+                      <button
+                        type="button"
+                        onClick={() => handleTogglePin(selectedNote)}
+                        className={clsx(
+                          'p-1.5 rounded-lg transition',
+                          selectedNote.isPinned
+                            ? 'text-amber-600 hover:bg-amber-50'
+                            : 'text-ink-400 hover:bg-ink-100 hover:text-ink-700'
+                        )}
+                        title={selectedNote.isPinned ? 'إلغاء التثبيت' : 'تثبيت'}
+                        aria-label={selectedNote.isPinned ? 'إلغاء التثبيت' : 'تثبيت'}
+                      >
+                        {selectedNote.isPinned ? (
+                          <PinOff size={16} />
+                        ) : (
+                          <Pin size={16} />
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(selectedNote)}
+                        className="p-1.5 rounded-lg text-ink-400 hover:bg-rose-50 hover:text-rose-600 transition"
+                        title="حذف"
+                        aria-label="حذف"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={enterEditMode}
+                        className="btn-primary !py-1.5 !px-3 text-xs gap-1"
+                        title="تحرير (⌘/Ctrl + E)"
+                      >
+                        <Pencil size={14} />
+                        تحرير
+                      </button>
+                    </div>
+
+                    {draftTags.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-1">
+                        {draftTags.map((name) => (
+                          <TagChip
+                            key={name}
+                            name={name}
+                            size="xs"
+                            onClick={() =>
+                              setTagFilter((cur) =>
+                                cur === name.toLowerCase()
+                                  ? null
+                                  : name.toLowerCase()
+                              )
+                            }
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div
+                    className="flex-1 min-h-0 overflow-hidden"
+                    onDoubleClick={enterEditMode}
+                  >
+                    <NoteView
+                      html={draftContent}
+                      updatedAt={selectedNote.updatedAt}
+                      createdAt={selectedNote.createdAt}
+                      onTaskToggle={onContentChange}
+                    />
+                  </div>
+                </>
+              )
             ) : (
               <div className="flex-1 flex items-center justify-center p-6">
                 <EmptyState
