@@ -20,12 +20,13 @@ export default function EmptyState({
 
   return (
     <div className="card p-12 text-center animate-fade-in">
-      <div className="mx-auto size-14 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center mb-4">
+      <div className="mx-auto size-14 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center mb-4
+                      dark:bg-brand-500/15 dark:text-brand-300">
         <Icon size={26} />
       </div>
-      <h3 className="text-lg font-semibold text-ink-900">{title}</h3>
+      <h3 className="text-lg font-semibold text-ink-900 dark:text-ink-50">{title}</h3>
       {description && (
-        <p className="text-ink-500 text-sm mt-1.5 max-w-sm mx-auto">
+        <p className="text-ink-500 text-sm mt-1.5 max-w-sm mx-auto dark:text-ink-400">
           {description}
         </p>
       )}

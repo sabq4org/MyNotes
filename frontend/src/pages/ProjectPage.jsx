@@ -418,33 +418,36 @@ export default function ProjectPage() {
         <div className="flex items-center gap-3 mb-4">
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 text-sm text-ink-600 hover:text-brand-700 transition"
+            className="inline-flex items-center gap-1.5 text-sm text-ink-600 hover:text-brand-700 transition
+                       dark:text-ink-300 dark:hover:text-brand-300"
           >
             <ArrowRight size={16} />
             <span>المشاريع</span>
           </Link>
-          <span className="text-ink-300">/</span>
+          <span className="text-ink-300 dark:text-ink-600">/</span>
           <div className="flex items-center gap-2 min-w-0">
             <span
-              className="size-7 rounded-lg shrink-0 flex items-center justify-center text-sm shadow-sm"
+              className="size-7 rounded-lg shrink-0 flex items-center justify-center text-sm shadow-sm text-white"
               style={{ backgroundColor: project?.color || '#6366f1' }}
               aria-hidden
             >
               {project?.icon || project?.name?.trim()?.slice(0, 1) || 'م'}
             </span>
-            <h1 className="text-lg font-semibold text-ink-900 truncate">
+            <h1 className="text-lg font-semibold text-ink-900 truncate dark:text-ink-50">
               {project?.name}
             </h1>
           </div>
         </div>
 
         {staleNoteWarning && (
-          <div className="mb-3 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800">
+          <div className="mb-3 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800
+                          dark:bg-amber-500/10 dark:border-amber-500/30 dark:text-amber-200">
             <span className="flex-1">{staleNoteWarning}</span>
             <button
               type="button"
               onClick={() => setStaleNoteWarning('')}
-              className="text-amber-700 hover:text-amber-900 text-xs underline"
+              className="text-amber-700 hover:text-amber-900 text-xs underline
+                         dark:text-amber-300 dark:hover:text-amber-100"
             >
               إخفاء
             </button>
@@ -460,11 +463,11 @@ export default function ProjectPage() {
               mobileShowEditor && selectedNote ? 'hidden md:flex' : 'flex'
             )}
           >
-            <div className="p-3 border-b border-ink-100 space-y-2">
+            <div className="p-3 border-b border-ink-100 space-y-2 dark:border-ink-800">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-ink-700">
+                <h2 className="text-sm font-semibold text-ink-700 dark:text-ink-200">
                   الملاحظات{' '}
-                  <span className="text-ink-400 font-normal">
+                  <span className="text-ink-400 font-normal dark:text-ink-500">
                     ({notes.length})
                   </span>
                 </h2>
@@ -481,7 +484,7 @@ export default function ProjectPage() {
               <div className="relative">
                 <Search
                   size={14}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-400"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-400 dark:text-ink-500"
                 />
                 <input
                   type="search"
@@ -513,7 +516,8 @@ export default function ProjectPage() {
                     <button
                       type="button"
                       onClick={() => setTagFilter(null)}
-                      className="text-[11px] text-ink-500 hover:text-ink-800 underline mr-1"
+                      className="text-[11px] text-ink-500 hover:text-ink-800 underline mr-1
+                                 dark:text-ink-400 dark:hover:text-ink-100"
                     >
                       مسح الفلتر
                     </button>
@@ -524,7 +528,7 @@ export default function ProjectPage() {
 
             <div className="flex-1 overflow-auto p-2 space-y-1">
               {filteredNotes.length === 0 ? (
-                <div className="px-3 py-10 text-center text-sm text-ink-400">
+                <div className="px-3 py-10 text-center text-sm text-ink-400 dark:text-ink-500">
                   {search
                     ? 'لا نتائج تطابق بحثك.'
                     : 'لا توجد ملاحظات بعد. اضغط "جديدة" لإنشاء أوّل ملاحظة.'}
@@ -554,12 +558,14 @@ export default function ProjectPage() {
             {selectedNote ? (
               mode === 'edit' ? (
                 <>
-                  <div className="px-4 py-2.5 border-b border-ink-100 bg-white space-y-2">
+                  <div className="px-4 py-2.5 border-b border-ink-100 bg-white space-y-2
+                                  dark:border-ink-800 dark:bg-ink-900">
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
                         onClick={() => setMobileShowEditor(false)}
-                        className="md:hidden p-1.5 rounded text-ink-500 hover:bg-ink-100"
+                        className="md:hidden p-1.5 rounded text-ink-500 hover:bg-ink-100
+                                   dark:text-ink-400 dark:hover:bg-ink-800"
                         aria-label="رجوع"
                       >
                         <MobileBack size={18} />
@@ -571,7 +577,8 @@ export default function ProjectPage() {
                         onChange={onTitleChange}
                         placeholder="عنوان الملاحظة"
                         maxLength={200}
-                        className="flex-1 min-w-0 bg-transparent text-lg font-semibold text-ink-900 placeholder:text-ink-300 focus:outline-none"
+                        className="flex-1 min-w-0 bg-transparent text-lg font-semibold text-ink-900 placeholder:text-ink-300 focus:outline-none
+                                   dark:text-ink-50 dark:placeholder:text-ink-600"
                       />
                       <SaveIndicator status={status} errorMessage={errorMessage} />
                       <button
@@ -602,19 +609,21 @@ export default function ProjectPage() {
                 </>
               ) : (
                 <>
-                  <div className="px-4 py-2.5 border-b border-ink-100 bg-white space-y-2">
+                  <div className="px-4 py-2.5 border-b border-ink-100 bg-white space-y-2
+                                  dark:border-ink-800 dark:bg-ink-900">
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
                         onClick={() => setMobileShowEditor(false)}
-                        className="md:hidden p-1.5 rounded text-ink-500 hover:bg-ink-100"
+                        className="md:hidden p-1.5 rounded text-ink-500 hover:bg-ink-100
+                                   dark:text-ink-400 dark:hover:bg-ink-800"
                         aria-label="رجوع"
                       >
                         <MobileBack size={18} />
                       </button>
-                      <h2 className="flex-1 min-w-0 truncate text-lg font-semibold text-ink-900">
+                      <h2 className="flex-1 min-w-0 truncate text-lg font-semibold text-ink-900 dark:text-ink-50">
                         {draftTitle || (
-                          <span className="text-ink-300 font-normal">
+                          <span className="text-ink-300 font-normal dark:text-ink-600">
                             بلا عنوان
                           </span>
                         )}
@@ -625,8 +634,8 @@ export default function ProjectPage() {
                         className={clsx(
                           'p-1.5 rounded-lg transition',
                           selectedNote.isPinned
-                            ? 'text-amber-600 hover:bg-amber-50'
-                            : 'text-ink-400 hover:bg-ink-100 hover:text-ink-700'
+                            ? 'text-amber-600 hover:bg-amber-50 dark:text-amber-300 dark:hover:bg-amber-500/10'
+                            : 'text-ink-400 hover:bg-ink-100 hover:text-ink-700 dark:text-ink-500 dark:hover:bg-ink-800 dark:hover:text-ink-200'
                         )}
                         title={selectedNote.isPinned ? 'إلغاء التثبيت' : 'تثبيت'}
                         aria-label={selectedNote.isPinned ? 'إلغاء التثبيت' : 'تثبيت'}
@@ -640,7 +649,8 @@ export default function ProjectPage() {
                       <button
                         type="button"
                         onClick={() => handleDelete(selectedNote)}
-                        className="p-1.5 rounded-lg text-ink-400 hover:bg-rose-50 hover:text-rose-600 transition"
+                        className="p-1.5 rounded-lg text-ink-400 hover:bg-rose-50 hover:text-rose-600 transition
+                                   dark:text-ink-500 dark:hover:bg-rose-500/10 dark:hover:text-rose-300"
                         title="حذف"
                         aria-label="حذف"
                       >
@@ -738,9 +748,9 @@ function sortNotes(a, b) {
 function ErrorScreen({ message, onBack }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="card max-w-md w-full text-center space-y-4">
-        <h2 className="text-lg font-semibold text-ink-900">حدث خطأ</h2>
-        <p className="text-sm text-ink-600">{message}</p>
+      <div className="card max-w-md w-full text-center space-y-4 p-6">
+        <h2 className="text-lg font-semibold text-ink-900 dark:text-ink-50">حدث خطأ</h2>
+        <p className="text-sm text-ink-600 dark:text-ink-300">{message}</p>
         <button onClick={onBack} className="btn-primary mx-auto">
           العودة إلى المشاريع
         </button>

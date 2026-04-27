@@ -33,7 +33,7 @@ export default function IconPicker({ value, onChange, color }) {
         >
           {value || '📝'}
         </div>
-        <p className="text-xs text-ink-500 leading-5">
+        <p className="text-xs text-ink-500 leading-5 dark:text-ink-400">
           اختر أيقونة للمشروع، واللون المختار يكون خلفيتها.
         </p>
       </div>
@@ -48,16 +48,18 @@ export default function IconPicker({ value, onChange, color }) {
               onClick={() => onChange(icon)}
               className={clsx(
                 'relative size-10 rounded-xl flex items-center justify-center text-xl transition border bg-white',
+                'dark:bg-ink-900',
                 active
-                  ? 'border-ink-900 ring-2 ring-ink-900/10 shadow-sm'
-                  : 'border-ink-100 hover:border-ink-300 hover:bg-ink-50'
+                  ? 'border-ink-900 ring-2 ring-ink-900/10 shadow-sm dark:border-ink-100 dark:ring-ink-100/10'
+                  : 'border-ink-100 hover:border-ink-300 hover:bg-ink-50 dark:border-ink-700 dark:hover:border-ink-600 dark:hover:bg-ink-800'
               )}
               aria-label={`اختر الأيقونة ${icon}`}
             >
               <span aria-hidden>{icon}</span>
               {active && (
                 <span
-                  className="absolute -top-1 -end-1 size-4 rounded-full bg-ink-900 text-white flex items-center justify-center"
+                  className="absolute -top-1 -end-1 size-4 rounded-full bg-ink-900 text-white flex items-center justify-center
+                             dark:bg-ink-100 dark:text-ink-900"
                   aria-hidden
                 >
                   <Check size={10} strokeWidth={3} />

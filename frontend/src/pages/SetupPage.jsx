@@ -58,7 +58,8 @@ export default function SetupPage() {
         </div>
 
         {error && (
-          <div className="text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2">
+          <div className="text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2
+                          dark:text-rose-300 dark:bg-rose-500/10 dark:border-rose-500/30">
             {error}
           </div>
         )}

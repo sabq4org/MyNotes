@@ -88,8 +88,8 @@ export default function DashboardPage() {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 animate-fade-in">
         <div className="flex items-end justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-ink-900">مشاريعي</h1>
-            <p className="text-ink-500 mt-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-ink-900 dark:text-ink-50">مشاريعي</h1>
+            <p className="text-ink-500 mt-1 dark:text-ink-400">
               {projects.length === 0
                 ? 'كل أفكارك في مكان واحد. ابدأ بإنشاء مشروع.'
                 : `لديك ${projects.length} ${projects.length === 1 ? 'مشروع' : 'مشاريع'}.`}
@@ -114,7 +114,8 @@ export default function DashboardPage() {
         </div>
 
         {loadError && (
-          <div className="mb-4 text-sm text-rose-700 bg-rose-50 border border-rose-100 rounded-xl px-4 py-3">
+          <div className="mb-4 text-sm text-rose-700 bg-rose-50 border border-rose-100 rounded-xl px-4 py-3
+                          dark:text-rose-300 dark:bg-rose-500/10 dark:border-rose-500/30">
             {loadError}
           </div>
         )}

@@ -47,7 +47,8 @@ export default function NoteEditor({ value, onChange, autoFocus = false }) {
           'prose prose-ink max-w-none focus:outline-none min-h-[40vh] px-6 py-5 ' +
           'prose-headings:font-semibold prose-p:my-3 prose-li:my-1 ' +
           'prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline ' +
-          'prose-blockquote:border-r-4 prose-blockquote:border-l-0 prose-blockquote:border-brand-300 prose-blockquote:bg-brand-50/40 prose-blockquote:py-1 prose-blockquote:rounded',
+          'prose-blockquote:border-r-4 prose-blockquote:border-l-0 prose-blockquote:border-brand-300 prose-blockquote:bg-brand-50/40 prose-blockquote:py-1 prose-blockquote:rounded ' +
+          'dark:prose-invert dark:prose-a:text-brand-300 dark:prose-blockquote:border-brand-500 dark:prose-blockquote:bg-brand-500/10',
       },
       // Inside a code block, always paste as plain text so multi-line
       // snippets keep their newlines and don't get split into separate

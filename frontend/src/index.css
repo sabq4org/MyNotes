@@ -9,13 +9,19 @@
     color-scheme: light;
   }
 
+  html.dark {
+    color-scheme: dark;
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
   }
 
   html, body {
     @apply h-full bg-ink-50 text-ink-900 antialiased;
+    @apply dark:bg-ink-950 dark:text-ink-100;
     font-family: theme('fontFamily.sans');
+    transition: background-color 200ms ease, color 200ms ease;
   }
 
   body {
@@ -29,6 +35,10 @@
   ::selection {
     @apply bg-brand-200 text-brand-900;
   }
+
+  html.dark ::selection {
+    @apply bg-brand-500/40 text-brand-50;
+  }
 }
 
 @layer components {
@@ -36,34 +46,43 @@
     @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium
            transition-all duration-150 select-none disabled:opacity-50 disabled:cursor-not-allowed
            focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2
-           focus-visible:ring-offset-ink-50;
+           focus-visible:ring-offset-ink-50 dark:focus-visible:ring-offset-ink-950;
   }
 
   .btn-primary {
-    @apply btn bg-brand-600 text-white shadow-soft hover:bg-brand-700 active:scale-[0.98];
+    @apply btn bg-brand-600 text-white shadow-soft hover:bg-brand-700 active:scale-[0.98]
+           dark:bg-brand-500 dark:hover:bg-brand-400 dark:text-white;
   }
 
   .btn-ghost {
-    @apply btn bg-transparent text-ink-700 hover:bg-ink-100 active:scale-[0.98];
+    @apply btn bg-transparent text-ink-700 hover:bg-ink-100 active:scale-[0.98]
+           dark:text-ink-200 dark:hover:bg-ink-800/70;
   }
 
   .btn-danger {
-    @apply btn bg-rose-600 text-white hover:bg-rose-700 active:scale-[0.98];
+    @apply btn bg-rose-600 text-white hover:bg-rose-700 active:scale-[0.98]
+           dark:bg-rose-500 dark:hover:bg-rose-400;
   }
 
   .input {
     @apply block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-sm
            text-ink-900 placeholder:text-ink-400 shadow-sm transition-all
            focus:border-brand-400 focus:outline-none focus:ring-4 focus:ring-brand-100
-           disabled:bg-ink-100;
+           disabled:bg-ink-100
+           dark:border-ink-700 dark:bg-ink-900 dark:text-ink-100 dark:placeholder:text-ink-500
+           dark:focus:border-brand-400 dark:focus:ring-brand-500/20
+           dark:disabled:bg-ink-800 dark:shadow-none;
   }
 
   .card {
-    @apply rounded-2xl bg-white shadow-soft;
+    @apply rounded-2xl bg-white shadow-soft
+           dark:bg-ink-900 dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_8px_24px_rgba(0,0,0,0.35)]
+           dark:ring-1 dark:ring-ink-800;
   }
 
   .label {
-    @apply block text-sm font-medium text-ink-700 mb-1.5;
+    @apply block text-sm font-medium text-ink-700 mb-1.5
+           dark:text-ink-200;
   }
 }
 
@@ -79,6 +98,10 @@
   color: theme('colors.ink.400');
   pointer-events: none;
   height: 0;
+}
+
+html.dark .ProseMirror p.is-editor-empty:first-child::before {
+  color: theme('colors.ink.500');
 }
 
 /* Task list (checklist) — built-in Tiptap markup uses <ul data-type="taskList"> */
@@ -119,9 +142,21 @@
   transition: background-color 120ms, border-color 120ms;
 }
 
+html.dark .ProseMirror ul[data-type="taskList"] input[type="checkbox"],
+html.dark .note-content ul[data-type="taskList"] input[type="checkbox"] {
+  background-color: theme('colors.ink.800');
+  border-color: theme('colors.ink.600');
+}
+
 .ProseMirror ul[data-type="taskList"] input[type="checkbox"]:checked {
   background-color: theme('colors.brand.600');
   border-color: theme('colors.brand.600');
+}
+
+html.dark .ProseMirror ul[data-type="taskList"] input[type="checkbox"]:checked,
+html.dark .note-content ul[data-type="taskList"] input[type="checkbox"]:checked {
+  background-color: theme('colors.brand.500');
+  border-color: theme('colors.brand.500');
 }
 
 .ProseMirror ul[data-type="taskList"] input[type="checkbox"]:checked::before {
@@ -137,6 +172,11 @@
   text-decoration: line-through;
 }
 
+html.dark .ProseMirror ul[data-type="taskList"] li[data-checked="true"] > div p,
+html.dark .note-content ul[data-type="taskList"] li[data-checked="true"] > div p {
+  color: theme('colors.ink.500');
+}
+
 .ProseMirror ul[data-type="taskList"] ul[data-type="taskList"] {
   margin-inline-start: 1.25rem;
 }
@@ -148,6 +188,11 @@
   padding-right: 1rem;
   margin: 1rem 0;
   color: theme('colors.ink.700');
+}
+
+html.dark .ProseMirror blockquote {
+  border-right-color: theme('colors.brand.500');
+  color: theme('colors.ink.300');
 }
 
 /* Inline code */
@@ -163,6 +208,12 @@
   unicode-bidi: embed;
 }
 
+html.dark .ProseMirror code,
+html.dark .note-content :not(pre) > code {
+  background-color: theme('colors.ink.800');
+  color: theme('colors.brand.200');
+}
+
 /* Code block (custom NodeView wrapper + read-only note view) */
 .ProseMirror .code-block,
 .note-content .note-code-block {
@@ -172,6 +223,13 @@
   background-color: theme('colors.ink.900');
   overflow: hidden;
   direction: ltr;
+}
+
+html.dark .ProseMirror .code-block,
+html.dark .note-content .note-code-block {
+  background-color: theme('colors.ink.950');
+  outline: 1px solid theme('colors.ink.800');
+  outline-offset: -1px;
 }
 
 .ProseMirror .code-block pre,

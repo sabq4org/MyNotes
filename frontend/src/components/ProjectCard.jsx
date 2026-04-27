@@ -31,7 +31,8 @@ export default function ProjectCard({ project, onEdit, onDelete, onOpen }) {
           onOpen?.(project);
         }
       }}
-      className="card p-5 cursor-pointer hover:-translate-y-0.5 hover:shadow-lg transition-all relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
+      className="card p-5 cursor-pointer hover:-translate-y-0.5 hover:shadow-lg transition-all relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400
+                 dark:hover:shadow-[0_8px_28px_rgba(0,0,0,0.55)]"
     >
       <div className="flex items-start gap-3">
         <div
@@ -44,13 +45,13 @@ export default function ProjectCard({ project, onEdit, onDelete, onOpen }) {
         </div>
 
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-ink-900 truncate">{project.name}</h3>
+          <h3 className="font-semibold text-ink-900 truncate dark:text-ink-50">{project.name}</h3>
           {project.description ? (
-            <p className="text-sm text-ink-500 line-clamp-2 mt-0.5">
+            <p className="text-sm text-ink-500 line-clamp-2 mt-0.5 dark:text-ink-400">
               {project.description}
             </p>
           ) : (
-            <p className="text-sm text-ink-400 mt-0.5">بلا وصف</p>
+            <p className="text-sm text-ink-400 mt-0.5 dark:text-ink-500">بلا وصف</p>
           )}
         </div>
 
@@ -61,7 +62,8 @@ export default function ProjectCard({ project, onEdit, onDelete, onOpen }) {
               e.stopPropagation();
               setMenuOpen((o) => !o);
             }}
-            className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition rounded-lg p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
+            className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition rounded-lg p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700
+                       dark:text-ink-500 dark:hover:bg-ink-800 dark:hover:text-ink-200"
             aria-label="خيارات"
           >
             <MoreVertical size={18} />
@@ -76,7 +78,8 @@ export default function ProjectCard({ project, onEdit, onDelete, onOpen }) {
                   setMenuOpen(false);
                   onEdit?.(project);
                 }}
-                className="w-full text-start flex items-center gap-2 px-3 py-2 text-sm text-ink-700 hover:bg-ink-50"
+                className="w-full text-start flex items-center gap-2 px-3 py-2 text-sm text-ink-700 hover:bg-ink-50
+                           dark:text-ink-200 dark:hover:bg-ink-800"
               >
                 <Pencil size={15} />
                 تعديل
@@ -88,7 +91,8 @@ export default function ProjectCard({ project, onEdit, onDelete, onOpen }) {
                   setMenuOpen(false);
                   onDelete?.(project);
                 }}
-                className="w-full text-start flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50"
+                className="w-full text-start flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50
+                           dark:text-rose-300 dark:hover:bg-rose-500/10"
               >
                 <Trash2 size={15} />
                 حذف
@@ -98,7 +102,7 @@ export default function ProjectCard({ project, onEdit, onDelete, onOpen }) {
         </div>
       </div>
 
-      <div className="mt-4 flex items-center gap-2 text-xs text-ink-500">
+      <div className="mt-4 flex items-center gap-2 text-xs text-ink-500 dark:text-ink-400">
         <FileText size={14} />
         <span>{project.notesCount} ملاحظة</span>
       </div>

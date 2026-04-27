@@ -123,7 +123,8 @@ export default function BackupMenu({ onAfterImport }) {
       {open && (
         <div
           role="menu"
-          className="absolute left-0 mt-2 min-w-[220px] rounded-xl bg-white shadow-lg ring-1 ring-ink-200 overflow-hidden z-30"
+          className="absolute left-0 mt-2 min-w-[220px] rounded-xl bg-white shadow-lg ring-1 ring-ink-200 overflow-hidden z-30
+                     dark:bg-ink-900 dark:ring-ink-700 dark:shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
         >
           <MenuItem
             icon={<Download size={15} />}
@@ -154,8 +155,8 @@ export default function BackupMenu({ onAfterImport }) {
           className={clsx(
             'fixed bottom-6 left-1/2 -translate-x-1/2 z-40 min-w-[260px] max-w-[90vw] rounded-xl px-4 py-2.5 text-sm shadow-lg ring-1',
             error
-              ? 'bg-rose-50 text-rose-800 ring-rose-200'
-              : 'bg-emerald-50 text-emerald-800 ring-emerald-200'
+              ? 'bg-rose-50 text-rose-800 ring-rose-200 dark:bg-rose-500/15 dark:text-rose-200 dark:ring-rose-500/30'
+              : 'bg-emerald-50 text-emerald-800 ring-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-200 dark:ring-emerald-500/30'
           )}
         >
           {error || info}
@@ -199,21 +200,23 @@ function MenuItem({ icon, label, description, destructive, onClick }) {
       className={clsx(
         'w-full px-3 py-2.5 text-start flex items-start gap-2.5 transition',
         destructive
-          ? 'text-rose-700 hover:bg-rose-50'
-          : 'text-ink-800 hover:bg-ink-50'
+          ? 'text-rose-700 hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-500/10'
+          : 'text-ink-800 hover:bg-ink-50 dark:text-ink-100 dark:hover:bg-ink-800'
       )}
     >
       <span
         className={clsx(
           'mt-0.5 shrink-0',
-          destructive ? 'text-rose-500' : 'text-brand-600'
+          destructive
+            ? 'text-rose-500 dark:text-rose-400'
+            : 'text-brand-600 dark:text-brand-400'
         )}
       >
         {icon}
       </span>
       <span className="flex-1">
         <span className="block text-sm font-medium">{label}</span>
-        <span className="block text-[11px] text-ink-500">{description}</span>
+        <span className="block text-[11px] text-ink-500 dark:text-ink-400">{description}</span>
       </span>
     </button>
   );

@@ -25,7 +25,9 @@ export default function ColorPicker({ value, onChange }) {
             onClick={() => onChange(c)}
             className={clsx(
               'size-8 rounded-full flex items-center justify-center transition shadow-sm',
-              active ? 'ring-2 ring-offset-2 ring-ink-900' : 'hover:scale-110'
+              active
+                ? 'ring-2 ring-offset-2 ring-ink-900 ring-offset-white dark:ring-ink-100 dark:ring-offset-ink-900'
+                : 'hover:scale-110'
             )}
             style={{ backgroundColor: c }}
             aria-label={`اختر اللون ${c}`}

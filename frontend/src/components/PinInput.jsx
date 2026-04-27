@@ -31,7 +31,8 @@ export default function PinInput({
         type="button"
         onClick={() => setVisible((v) => !v)}
         disabled={disabled}
-        className="absolute inset-y-0 end-0 flex items-center px-3 text-ink-400 hover:text-ink-700 transition"
+        className="absolute inset-y-0 end-0 flex items-center px-3 text-ink-400 hover:text-ink-700 transition
+                   dark:text-ink-500 dark:hover:text-ink-200"
         aria-label={visible ? 'إخفاء' : 'إظهار'}
         tabIndex={-1}
       >

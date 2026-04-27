@@ -29,8 +29,10 @@ function ToolButton({ active, disabled, onClick, title, children }) {
       className={clsx(
         'inline-flex items-center justify-center size-9 rounded-lg transition',
         'text-ink-600 hover:bg-ink-100 hover:text-ink-900',
+        'dark:text-ink-300 dark:hover:bg-ink-800 dark:hover:text-ink-50',
         'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent',
-        active && 'bg-brand-50 text-brand-700 hover:bg-brand-100'
+        active &&
+          'bg-brand-50 text-brand-700 hover:bg-brand-100 dark:bg-brand-500/15 dark:text-brand-200 dark:hover:bg-brand-500/20'
       )}
     >
       {children}
@@ -39,7 +41,7 @@ function ToolButton({ active, disabled, onClick, title, children }) {
 }
 
 function Divider() {
-  return <span className="mx-1 h-6 w-px bg-ink-200" />;
+  return <span className="mx-1 h-6 w-px bg-ink-200 dark:bg-ink-700" />;
 }
 
 export default function EditorToolbar({ editor }) {
@@ -119,7 +121,8 @@ export default function EditorToolbar({ editor }) {
   };
 
   return (
-    <div className="flex items-center flex-wrap gap-0.5 px-2 py-1.5 border-b border-ink-100 bg-white sticky top-0 z-10">
+    <div className="flex items-center flex-wrap gap-0.5 px-2 py-1.5 border-b border-ink-100 bg-white sticky top-0 z-10
+                    dark:border-ink-800 dark:bg-ink-900">
       <ToolButton
         title="تراجع"
         onClick={() => editor.chain().focus().undo().run()}

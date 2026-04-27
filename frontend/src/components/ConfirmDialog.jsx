@@ -37,7 +37,7 @@ export default function ConfirmDialog({
         </>
       }
     >
-      {description && <p className="text-sm text-ink-600 leading-relaxed">{description}</p>}
+      {description && <p className="text-sm text-ink-600 leading-relaxed dark:text-ink-300">{description}</p>}
     </Modal>
   );
 }

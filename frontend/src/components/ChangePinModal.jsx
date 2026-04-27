@@ -68,8 +68,9 @@ export default function ChangePinModal({ open, onClose }) {
       title="تغيير كلمة المرور"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="rounded-xl bg-ink-50 border border-ink-100 px-3.5 py-3 flex items-start gap-2 text-sm text-ink-600">
-          <KeyRound size={17} className="mt-0.5 text-brand-600 shrink-0" />
+        <div className="rounded-xl bg-ink-50 border border-ink-100 px-3.5 py-3 flex items-start gap-2 text-sm text-ink-600
+                        dark:bg-ink-800/60 dark:border-ink-700 dark:text-ink-300">
+          <KeyRound size={17} className="mt-0.5 text-brand-600 shrink-0 dark:text-brand-400" />
           <p>غيّر كلمة مرور الدخول للتطبيق. بعد الحفظ ستبقى مسجّل دخولك بالتوكن الجديد.</p>
         </div>
 
@@ -113,13 +114,15 @@ export default function ChangePinModal({ open, onClose }) {
         </div>
 
         {error && (
-          <div className="text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2">
+          <div className="text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2
+                          dark:text-rose-300 dark:bg-rose-500/10 dark:border-rose-500/30">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">
+          <div className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2
+                          dark:text-emerald-300 dark:bg-emerald-500/10 dark:border-emerald-500/30">
             {success}
           </div>
         )}

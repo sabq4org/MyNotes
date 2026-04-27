@@ -173,20 +173,21 @@ export default function NoteView({
   return (
     <div className="flex flex-col h-full">
       {(updatedAt || createdAt) && (
-        <div className="px-6 pt-5 pb-2 text-xs text-ink-400 border-b border-ink-100/60 flex items-center gap-3">
+        <div className="px-6 pt-5 pb-2 text-xs text-ink-400 border-b border-ink-100/60 flex items-center gap-3
+                        dark:text-ink-500 dark:border-ink-800/60">
           {updatedAt && (
             <span>
               آخر تحديث:{' '}
-              <span className="text-ink-600">{relativeTime(updatedAt)}</span>
+              <span className="text-ink-600 dark:text-ink-300">{relativeTime(updatedAt)}</span>
             </span>
           )}
           {createdAt && createdAt !== updatedAt && (
-            <span className="text-ink-300">·</span>
+            <span className="text-ink-300 dark:text-ink-600">·</span>
           )}
           {createdAt && createdAt !== updatedAt && (
             <span>
               أنشئت:{' '}
-              <span className="text-ink-600">{relativeTime(createdAt)}</span>
+              <span className="text-ink-600 dark:text-ink-300">{relativeTime(createdAt)}</span>
             </span>
           )}
         </div>
@@ -194,13 +195,14 @@ export default function NoteView({
 
       <div className="flex-1 overflow-auto">
         {isEmpty ? (
-          <div className="h-full flex flex-col items-center justify-center p-10 text-center text-ink-400">
-            <div className="mx-auto mb-3 size-12 rounded-2xl bg-ink-50 text-ink-400 flex items-center justify-center">
+          <div className="h-full flex flex-col items-center justify-center p-10 text-center text-ink-400 dark:text-ink-500">
+            <div className="mx-auto mb-3 size-12 rounded-2xl bg-ink-50 text-ink-400 flex items-center justify-center
+                            dark:bg-ink-800 dark:text-ink-400">
               <FileText size={22} />
             </div>
-            <p className="text-sm font-medium text-ink-500">ملاحظة فارغة</p>
-            <p className="text-xs mt-1 text-ink-400">
-              اضغط <span className="text-ink-600 font-medium">تحرير</span> لإضافة محتوى.
+            <p className="text-sm font-medium text-ink-500 dark:text-ink-300">ملاحظة فارغة</p>
+            <p className="text-xs mt-1 text-ink-400 dark:text-ink-500">
+              اضغط <span className="text-ink-600 font-medium dark:text-ink-200">تحرير</span> لإضافة محتوى.
             </p>
           </div>
         ) : (
@@ -213,7 +215,9 @@ export default function NoteView({
               'prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline ' +
               'prose-blockquote:border-r-4 prose-blockquote:border-l-0 prose-blockquote:border-brand-300 prose-blockquote:bg-brand-50/40 prose-blockquote:py-1 prose-blockquote:rounded ' +
               'prose-code:before:content-none prose-code:after:content-none ' +
-              'prose-code:bg-ink-100 prose-code:text-ink-800 prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:font-medium'
+              'prose-code:bg-ink-100 prose-code:text-ink-800 prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:font-medium ' +
+              'dark:prose-invert dark:prose-a:text-brand-300 dark:prose-blockquote:border-brand-500 dark:prose-blockquote:bg-brand-500/10 ' +
+              'dark:prose-code:bg-ink-800 dark:prose-code:text-brand-200'
             }
             dangerouslySetInnerHTML={{ __html: decoratedHtml }}
           />

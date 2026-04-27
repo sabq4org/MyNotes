@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import LoginPage from './pages/LoginPage';
 import SetupPage from './pages/SetupPage';
 import DashboardPage from './pages/DashboardPage';
@@ -40,10 +41,10 @@ function BackendUnreachable({ error }) {
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="card p-6 max-w-md text-center">
-        <h2 className="font-semibold text-ink-900">{title}</h2>
-        <p className="text-sm text-ink-500 mt-2">{hint}</p>
+        <h2 className="font-semibold text-ink-900 dark:text-ink-50">{title}</h2>
+        <p className="text-sm text-ink-500 dark:text-ink-400 mt-2">{hint}</p>
         {(status || code) && (
-          <p className="mt-3 text-[11px] font-mono text-ink-400">
+          <p className="mt-3 text-[11px] font-mono text-ink-400 dark:text-ink-500">
             {status ? `HTTP ${status}` : ''}
             {status && code ? ' · ' : ''}
             {code || ''}
@@ -95,10 +96,12 @@ function AuthGate() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AuthGate />
-      </BrowserRouter>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <AuthGate />
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
